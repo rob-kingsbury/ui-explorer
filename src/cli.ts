@@ -74,7 +74,7 @@ async function run(urls: string[], options: Record<string, unknown>): Promise<vo
         if (!options.quiet) {
           console.log(chalk.gray(`Loaded config from ${configPath}`))
         }
-      } catch (error) {
+      } catch {
         console.error(chalk.yellow(`Warning: Could not load config from ${configPath}`))
       }
     } else {

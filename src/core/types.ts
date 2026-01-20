@@ -5,7 +5,7 @@
  * with database, API, and external service verification.
  */
 
-import type { Page, BrowserContext } from 'playwright'
+import type { Page } from 'playwright'
 
 // ============================================================================
 // Viewport & Display

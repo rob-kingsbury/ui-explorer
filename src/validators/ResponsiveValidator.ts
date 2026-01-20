@@ -9,7 +9,7 @@
  */
 
 import type { Page } from 'playwright'
-import type { Issue, ValidatorResult, ViewportName, Viewport, VIEWPORTS } from '../core/types.js'
+import type { Issue, ValidatorResult, ViewportName } from '../core/types.js'
 
 export interface ResponsiveValidatorConfig {
   /** Enable responsive validation */
@@ -102,7 +102,6 @@ export class ResponsiveValidator {
     viewportSize: { width: number; height: number }
   ): Promise<Issue[]> {
     const issues: Issue[] = []
-    const tolerance = this.config.overflowTolerance
 
     const overflow = await page.evaluate((vw) => {
       const docWidth = document.documentElement.scrollWidth

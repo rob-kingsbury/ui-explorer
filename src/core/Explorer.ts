@@ -28,11 +28,9 @@ import type {
   StateNode,
   StateTransition,
   ViewportName,
-  VIEWPORTS,
   ExplorerEvent,
   ExplorerEventHandler,
   SetupStep,
-  TestDataConfig,
 } from './types.js'
 
 const DEFAULT_VIEWPORTS: Record<ViewportName, { width: number; height: number }> = {
@@ -540,7 +538,7 @@ export class Explorer {
   private async verifyExpectations(
     expects: ActionExpectation[],
     page: Page,
-    preBackendState: Record<string, unknown>
+    _preBackendState: Record<string, unknown>
   ): Promise<VerificationResult[]> {
     const results: VerificationResult[] = []
 
