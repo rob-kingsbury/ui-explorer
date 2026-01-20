@@ -455,6 +455,23 @@ export interface ValidatorConfig {
     maxResponseTime?: number
     failOnError?: boolean
     ignorePatterns?: (string | RegExp)[]
+    /** Resource types to track */
+    trackResourceTypes?: ('xhr' | 'fetch' | 'document' | 'stylesheet' | 'script' | 'image' | 'font' | 'other')[]
+    /** Check for mixed content (HTTP on HTTPS) */
+    checkMixedContent?: boolean
+  }
+  brokenLinks?: {
+    enabled: boolean
+    /** Check external (off-site) links */
+    checkExternal?: boolean
+    /** Check internal (same-site) links */
+    checkInternal?: boolean
+    /** Request timeout in milliseconds */
+    timeout?: number
+    /** URL patterns to ignore */
+    ignorePatterns?: (string | RegExp)[]
+    /** Follow redirects and report chains */
+    followRedirects?: boolean
   }
 }
 

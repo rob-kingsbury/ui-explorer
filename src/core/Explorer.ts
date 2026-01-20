@@ -12,6 +12,8 @@ import { AdapterRegistry } from '../adapters/BaseAdapter.js'
 import { SupabaseAdapter } from '../adapters/SupabaseAdapter.js'
 import { AccessibilityValidator } from '../validators/AccessibilityValidator.js'
 import { ResponsiveValidator } from '../validators/ResponsiveValidator.js'
+import { BrokenLinksValidator } from '../validators/BrokenLinksValidator.js'
+import { NetworkValidator } from '../validators/NetworkValidator.js'
 import type {
   ExplorerConfig,
   ExplorationResult,
@@ -53,7 +55,8 @@ const DEFAULT_CONFIG: Partial<ExplorerConfig> = {
     accessibility: { enabled: true, rules: ['wcag21aa'] },
     responsive: { enabled: true, checkOverflow: true, checkTouchTargets: true, minTouchTarget: 44 },
     console: { enabled: true, failOnError: false },
-    network: { enabled: true, maxResponseTime: 5000 },
+    network: { enabled: true, maxResponseTime: 3000, checkMixedContent: true },
+    brokenLinks: { enabled: true, checkExternal: true, checkInternal: true, timeout: 5000 },
   },
   output: {
     dir: './ui-explorer-reports',
@@ -73,6 +76,8 @@ export class Explorer {
   private adapters: AdapterRegistry
   private accessibilityValidator: AccessibilityValidator
   private responsiveValidator: ResponsiveValidator
+  private brokenLinksValidator: BrokenLinksValidator
+  private networkValidator: NetworkValidator
 
   private browser: Browser | null = null
   private context: BrowserContext | null = null
@@ -106,6 +111,14 @@ export class Explorer {
 
     this.responsiveValidator = new ResponsiveValidator(
       this.config.validators?.responsive
+    )
+
+    this.brokenLinksValidator = new BrokenLinksValidator(
+      this.config.validators?.brokenLinks
+    )
+
+    this.networkValidator = new NetworkValidator(
+      this.config.validators?.network
     )
 
     this.graph = {
@@ -250,6 +263,11 @@ export class Explorer {
     if (!this.context) return
 
     const page = await this.context.newPage()
+
+    // Attach network validator to track requests
+    if (this.config.validators?.network?.enabled) {
+      this.networkValidator.attachToPage(page)
+    }
 
     try {
       // Set viewport
@@ -697,6 +715,21 @@ export class Explorer {
       const result = await this.responsiveValidator.validate(page, viewport)
       issues.push(...result.issues)
       this.emit({ type: 'validation:complete', results: [result] })
+    }
+
+    // Broken Links
+    if (this.config.validators?.brokenLinks?.enabled) {
+      const result = await this.brokenLinksValidator.validate(page, viewport)
+      issues.push(...result.issues)
+      this.emit({ type: 'validation:complete', results: [result] })
+    }
+
+    // Network (uses collected requests from page listener)
+    if (this.config.validators?.network?.enabled) {
+      const result = await this.networkValidator.validate(page, viewport)
+      issues.push(...result.issues)
+      this.emit({ type: 'validation:complete', results: [result] })
+      this.networkValidator.clearRequests() // Clear after reporting
     }
 
     // Console errors

@@ -12,6 +12,7 @@
  *   npx eva-qa quick http://localhost:3000       # Fast scan (3 depth, a11y + responsive)
  *   npx eva-qa a11y http://localhost:3000        # Accessibility only
  *   npx eva-qa responsive http://localhost:3000  # Responsive issues only
+ *   npx eva-qa links http://localhost:3000       # Find broken and stale links
  *   npx eva-qa full http://localhost:3000        # Full exploration with all checks
  *
  * With Authentication:
@@ -175,6 +176,7 @@ interface Preset {
     responsive: boolean
     console: boolean
     network: boolean
+    brokenLinks: boolean
   }
 }
 
@@ -192,6 +194,7 @@ const PRESETS: Record<string, Preset> = {
       responsive: true,
       console: true,
       network: false,
+      brokenLinks: false,
     },
   },
   a11y: {
@@ -207,6 +210,7 @@ const PRESETS: Record<string, Preset> = {
       responsive: false,
       console: false,
       network: false,
+      brokenLinks: false,
     },
   },
   responsive: {
@@ -222,6 +226,23 @@ const PRESETS: Record<string, Preset> = {
       responsive: true,
       console: false,
       network: false,
+      brokenLinks: false,
+    },
+  },
+  links: {
+    name: 'Link Check',
+    description: 'Find broken and stale links (5 depth, 100 states)',
+    exploration: {
+      maxDepth: 5,
+      maxStates: 100,
+      viewports: ['desktop'],
+    },
+    validators: {
+      accessibility: false,
+      responsive: false,
+      console: false,
+      network: true,
+      brokenLinks: true,
     },
   },
   full: {
@@ -237,6 +258,7 @@ const PRESETS: Record<string, Preset> = {
       responsive: true,
       console: true,
       network: true,
+      brokenLinks: true,
     },
   },
 }
@@ -330,6 +352,23 @@ program
   .action((url, options, command) => {
     // Use optsWithGlobals() to include parent program options (like --auth)
     runExplorer(url, { ...command.optsWithGlobals(), mode: 'full' })
+  })
+
+program
+  .command('links [url]')
+  .description('Link check - find broken and stale links')
+  .option('-a, --auth <path>', 'Playwright auth state file')
+  .option('-o, --output <dir>', 'Output directory', './eva-qa-reports')
+  .option('--cookie <cookie...>', 'Set cookies for authentication (can be repeated)')
+  .option('--header <header...>', 'Set headers for authentication (can be repeated)')
+  .option('--timeout <ms>', 'Timeout in milliseconds')
+  .option('-f, --format <formats>', 'Output formats: html,json,junit')
+  .option('--score', 'Show compliance score')
+  .option('--ci', 'CI mode')
+  .option('--external', 'Check external links (default: true)')
+  .option('--no-external', 'Skip external link checking')
+  .action((url, options, command) => {
+    runExplorer(url, { ...command.optsWithGlobals(), mode: 'links' })
   })
 
 // =============================================================================
@@ -520,8 +559,16 @@ async function runExplorer(
         },
         network: {
           enabled: preset.validators.network,
-          maxResponseTime: 5000,
+          maxResponseTime: 3000,
+          checkMixedContent: true,
           ...fileConfig.validators?.network,
+        },
+        brokenLinks: {
+          enabled: preset.validators.brokenLinks,
+          checkExternal: options.external !== false,
+          checkInternal: true,
+          timeout: 5000,
+          ...fileConfig.validators?.brokenLinks,
         },
       },
 
@@ -643,6 +690,8 @@ interface ComplianceScore {
   accessibility: number
   /** Responsive score */
   responsive: number
+  /** Network score (includes broken links) */
+  network: number
   /** Grade (A, B, C, D, F) */
   grade: string
   /** Human-readable summary */
@@ -663,6 +712,7 @@ function calculateComplianceScore(result: import('./core/types.js').ExplorationR
   // Calculate deductions per type
   let a11yDeductions = 0
   let responsiveDeductions = 0
+  let networkDeductions = 0
   let totalDeductions = 0
 
   for (const issue of issues) {
@@ -672,6 +722,8 @@ function calculateComplianceScore(result: import('./core/types.js').ExplorationR
       a11yDeductions += weight
     } else if (issue.type === 'responsive') {
       responsiveDeductions += weight
+    } else if (issue.type === 'network') {
+      networkDeductions += weight
     }
   }
 
@@ -680,11 +732,13 @@ function calculateComplianceScore(result: import('./core/types.js').ExplorationR
   const scaledDeductions = totalDeductions / stateScale
   const scaledA11y = a11yDeductions / stateScale
   const scaledResponsive = responsiveDeductions / stateScale
+  const scaledNetwork = networkDeductions / stateScale
 
   // Calculate scores (0-100)
   const overall = Math.max(0, Math.min(100, Math.round(100 - scaledDeductions)))
   const accessibility = Math.max(0, Math.min(100, Math.round(100 - scaledA11y)))
   const responsive = Math.max(0, Math.min(100, Math.round(100 - scaledResponsive)))
+  const network = Math.max(0, Math.min(100, Math.round(100 - scaledNetwork)))
 
   // Determine grade
   let grade: string
@@ -709,7 +763,7 @@ function calculateComplianceScore(result: import('./core/types.js').ExplorationR
     summary_text = `Needs work. ${critical} critical, ${serious} serious issues found.`
   }
 
-  return { overall, accessibility, responsive, grade, summary: summary_text }
+  return { overall, accessibility, responsive, network, grade, summary: summary_text }
 }
 
 // =============================================================================
@@ -761,6 +815,9 @@ function printResults(
     }
     if (result.issues.some(i => i.type === 'responsive')) {
       console.log(chalk.gray(`  Responsive: ${score.responsive}%`))
+    }
+    if (result.issues.some(i => i.type === 'network')) {
+      console.log(chalk.gray(`  Network/Links: ${score.network}%`))
     }
     console.log(chalk.gray(`  ${score.summary}`))
     console.log()
@@ -816,6 +873,7 @@ function writeReports(
             overall: score.overall,
             accessibility: score.accessibility,
             responsive: score.responsive,
+            network: score.network,
             grade: score.grade,
             summary: score.summary,
           },
