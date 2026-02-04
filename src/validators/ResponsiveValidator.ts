@@ -112,7 +112,24 @@ export class ResponsiveValidator {
       const overflowingElements: Array<{ selector: string; width: number; overflow: number }> = []
 
       const checkElement = (el: Element) => {
-        const rect = el.getBoundingClientRect()
+        const htmlEl = el as HTMLElement
+        const rect = htmlEl.getBoundingClientRect()
+        const style = getComputedStyle(htmlEl)
+
+        // Skip hidden elements (display: none, visibility: hidden, zero size)
+        if (rect.width === 0 || rect.height === 0) return
+        if (style.display === 'none') return
+        if (style.visibility === 'hidden') return
+        if (!htmlEl.offsetParent && style.position !== 'fixed') return
+
+        // Skip elements inside a hidden parent
+        let parent = htmlEl.parentElement
+        while (parent) {
+          const parentStyle = getComputedStyle(parent)
+          if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') return
+          parent = parent.parentElement
+        }
+
         if (rect.right > vw + 10) {
           // 10px tolerance
           let selector = el.tagName.toLowerCase()

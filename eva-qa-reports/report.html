@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EVA Report</title>
+  <title>EVA Report - F (55%)</title>
   <style>
     :root {
       --bg: #0f0f10;
@@ -28,6 +28,33 @@
     h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
     h2 { font-size: 1.125rem; margin: 2rem 0 1rem; color: var(--text-muted); }
     .meta { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+    .score-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .score-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .score-circle.success { background: linear-gradient(135deg, #22c55e33, #22c55e11); border: 3px solid var(--success); }
+    .score-circle.warning { background: linear-gradient(135deg, #f59e0b33, #f59e0b11); border: 3px solid var(--warning); }
+    .score-circle.danger { background: linear-gradient(135deg, #ef444433, #ef444411); border: 3px solid var(--danger); }
+    .score-value { font-size: 1.75rem; }
+    .score-grade { font-size: 0.875rem; color: var(--text-muted); }
+    .score-details { flex: 1; }
+    .score-summary { font-size: 1.125rem; margin-bottom: 0.5rem; }
+    .score-breakdown { color: var(--text-muted); font-size: 0.875rem; }
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -70,17 +97,72 @@
     .badge.moderate { background: var(--primary); }
     .badge.minor { background: var(--text-muted); }
     .issue-desc { color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem; }
+    .issue-impact { background: var(--bg); border-radius: 4px; padding: 0.5rem 0.75rem; margin-top: 0.5rem; font-size: 0.8125rem; color: var(--text); border-left: 2px solid var(--warning); }
+    .issue-impact::before { content: "User impact: "; font-weight: 500; color: var(--warning); }
     .issue-elements { font-family: monospace; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
     .issue-elements code { background: var(--bg); padding: 0.125rem 0.375rem; border-radius: 3px; }
     .empty { text-align: center; padding: 3rem; color: var(--success); }
     a { color: var(--primary); text-decoration: none; }
     a:hover { text-decoration: underline; }
+    .quick-wins {
+      background: linear-gradient(135deg, #3b82f622, #3b82f611);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .quick-wins h2 {
+      color: var(--primary);
+      margin: 0 0 1rem;
+      font-size: 1rem;
+    }
+    .quick-wins-intro {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .quick-win {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .quick-win:last-child { margin-bottom: 0; }
+    .quick-win-header { display: flex; align-items: center; gap: 0.5rem; }
+    .quick-win-number {
+      background: var(--primary);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .quick-win-title { font-weight: 500; }
+    .quick-win-desc { color: var(--text-muted); font-size: 0.875rem; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>EVA Report</h1>
-    <p class="meta">Generated 2026-01-20, 3:31:29 p.m.</p>
+    <p class="meta">Generated 2026-02-04, 12:49:29 a.m.</p>
+
+    <div class="score-card">
+      <div class="score-circle danger">
+        <div class="score-value">55%</div>
+        <div class="score-grade">Grade F</div>
+      </div>
+      <div class="score-details">
+        <div class="score-summary">Needs work. 0 critical, 1 serious issues found.</div>
+        <div class="score-breakdown">
+          Accessibility: 95% · 
+          Responsive: 60%
+        </div>
+      </div>
+    </div>
 
     <div class="stats">
       <div class="stat">
@@ -88,15 +170,15 @@
         <div class="stat-label">States</div>
       </div>
       <div class="stat">
-        <div class="stat-value">7</div>
+        <div class="stat-value">14</div>
         <div class="stat-label">Actions</div>
       </div>
       <div class="stat warning">
-        <div class="stat-value">10</div>
+        <div class="stat-value">8</div>
         <div class="stat-label">Issues</div>
       </div>
       <div class="stat">
-        <div class="stat-value">119.5s</div>
+        <div class="stat-value">64.8s</div>
         <div class="stat-label">Duration</div>
       </div>
     </div>
@@ -104,106 +186,123 @@
     
 
     
-      <h2>Responsive Issues (10)</h2>
+    <div class="quick-wins">
+      <h2>🎯 Start Here - Top 1 Quick Wins</h2>
+      <p class="quick-wins-intro">Fix these first for the biggest impact. Each fix addresses multiple issues.</p>
+      
+        <div class="quick-win">
+          <div class="quick-win-header">
+            <span class="quick-win-number">1</span>
+            <span class="quick-win-title">no-horizontal-scroll</span>
+            <span class="badge serious">1 occurrence</span>
+          </div>
+          <div class="quick-win-desc">
+            <strong>Fix:</strong> See the help link for fix instructions.
+            
+          </div>
+        </div>
+      
+    </div>
+
+    
+      <h2>Accessibility Issues (1)</h2>
       <div class="issues">
         
-          <div class="issue minor">
+          <div class="issue moderate">
             <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
+              <span class="issue-rule">scan-error</span>
+              <span class="badge moderate">moderate</span>
             </div>
-            <div class="issue-desc">Interactive element is far below fold: button</div>
-            <div class="issue-elements"><code>button</code></div>
+            <div class="issue-desc">Accessibility scan failed: page.evaluate: Execution context was destroyed, most likely because of a navigation</div>
+            
+            
             
           </div>
         
-          <div class="issue minor">
+        
+      </div>
+    
+      <h2>Responsive Issues (7)</h2>
+      <div class="issues">
+        
+          <div class="issue serious">
             <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
+              <span class="issue-rule">no-horizontal-scroll</span>
+              <span class="badge serious">serious</span>
             </div>
-            <div class="issue-desc">Interactive element is far below fold: a</div>
+            <div class="issue-desc">Page has horizontal overflow at 375px width (content is 454px)</div>
+            
+            <div class="issue-elements"><code>table.min-w-full</code> <code>thead.bg-gray-50</code></div>
+            
+          </div>
+        
+          <div class="issue moderate">
+            <div class="issue-header">
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
+            </div>
+            <div class="issue-desc">Touch target &quot;Add Client&quot; is 101x38px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
             <div class="issue-elements"><code>a</code></div>
             
           </div>
         
-          <div class="issue minor">
+          <div class="issue moderate">
             <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
             </div>
-            <div class="issue-desc">Interactive element is far below fold: button</div>
+            <div class="issue-desc">Touch target &quot;input&quot; is 343x40px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
+            <div class="issue-elements"><code>input</code></div>
+            
+          </div>
+        
+          <div class="issue moderate">
+            <div class="issue-header">
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
+            </div>
+            <div class="issue-desc">Touch target &quot;Show Active
+Show Archived
+Show&quot; is 343x40px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
+            <div class="issue-elements"><code>select</code></div>
+            
+          </div>
+        
+          <div class="issue moderate">
+            <div class="issue-header">
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
+            </div>
+            <div class="issue-desc">Touch target &quot;15 per page
+25 per page
+50 per&quot; is 343x40px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
+            <div class="issue-elements"><code>select</code></div>
+            
+          </div>
+        
+          <div class="issue moderate">
+            <div class="issue-header">
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
+            </div>
+            <div class="issue-desc">Touch target &quot;Export CSV&quot; is 121x38px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
             <div class="issue-elements"><code>button</code></div>
             
           </div>
         
-          <div class="issue minor">
+          <div class="issue moderate">
             <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
+              <span class="issue-rule">touch-target-size</span>
+              <span class="badge moderate">moderate</span>
             </div>
-            <div class="issue-desc">Interactive element is far below fold: a</div>
-            <div class="issue-elements"><code>a</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: button</div>
-            <div class="issue-elements"><code>button</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: a</div>
-            <div class="issue-elements"><code>a</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: button</div>
-            <div class="issue-elements"><code>button</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: a</div>
-            <div class="issue-elements"><code>a</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: button</div>
-            <div class="issue-elements"><code>button</code></div>
-            
-          </div>
-        
-          <div class="issue minor">
-            <div class="issue-header">
-              <span class="issue-rule">element-out-of-bounds</span>
-              <span class="badge minor">minor</span>
-            </div>
-            <div class="issue-desc">Interactive element is far below fold: a</div>
-            <div class="issue-elements"><code>a</code></div>
+            <div class="issue-desc">Touch target &quot;input&quot; is 16x16px (minimum 44x44px)</div>
+            <div class="issue-impact">Mobile users may have difficulty tapping this element accurately.</div>
+            <div class="issue-elements"><code>input</code></div>
             
           </div>
         

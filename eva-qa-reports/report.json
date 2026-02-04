@@ -1,200 +1,220 @@
 {
   "summary": {
     "statesExplored": 1,
-    "actionsPerformed": 7,
-    "issuesFound": 10,
+    "actionsPerformed": 14,
+    "issuesFound": 8,
     "verificationsPassed": 0,
     "verificationsFailed": 0,
-    "duration": 119527,
+    "duration": 64810,
     "coverage": {
       "urlsCovered": [
-        "http://localhost:3000/"
+        "http://localhost:8000/clients"
       ],
       "actionsDiscovered": 0,
-      "actionsExecuted": 7,
+      "actionsExecuted": 14,
       "schemasMatched": 0
     }
   },
+  "score": {
+    "overall": 55,
+    "accessibility": 95,
+    "responsive": 60,
+    "network": 100,
+    "grade": "F",
+    "summary": "Needs work. 0 critical, 1 serious issues found."
+  },
   "issues": [
     {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: button",
-      "viewport": "desktop",
-      "elements": [
-        "button"
-      ],
+      "type": "accessibility",
+      "severity": "moderate",
+      "rule": "scan-error",
+      "description": "Accessibility scan failed: page.evaluate: Execution context was destroyed, most likely because of a navigation",
+      "viewport": "mobile",
       "details": {
-        "position": {
-          "x": 183,
-          "y": 9034
-        },
-        "reason": "far below fold"
+        "error": "page.evaluate: Execution context was destroyed, most likely because of a navigation"
       }
     },
     {
       "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: a",
-      "viewport": "desktop",
+      "severity": "serious",
+      "rule": "no-horizontal-scroll",
+      "description": "Page has horizontal overflow at 375px width (content is 454px)",
+      "viewport": "mobile",
+      "elements": [
+        "table.min-w-full",
+        "thead.bg-gray-50",
+        "tr",
+        "th.hidden",
+        "th.px-3",
+        "tbody.bg-white",
+        "tr.hover:bg-gray-50",
+        "td.hidden",
+        "td.px-3",
+        "span.inline-flex"
+      ],
+      "details": {
+        "viewportWidth": 375,
+        "contentWidth": 454,
+        "overflow": 79,
+        "overflowingElements": [
+          {
+            "selector": "table.min-w-full",
+            "width": 446.484375,
+            "overflow": 79.484375
+          },
+          {
+            "selector": "thead.bg-gray-50",
+            "width": 442.484375,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "tr",
+            "width": 442.484375,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "th.hidden",
+            "width": 56.203125,
+            "overflow": 30.796875
+          },
+          {
+            "selector": "th.px-3",
+            "width": 44.6875,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "tbody.bg-white",
+            "width": 442.484375,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "tr.hover:bg-gray-50",
+            "width": 442.484375,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "td.hidden",
+            "width": 56.203125,
+            "overflow": 30.796875
+          },
+          {
+            "selector": "td.px-3",
+            "width": 44.6875,
+            "overflow": 77.484375
+          },
+          {
+            "selector": "span.inline-flex",
+            "width": 42.65625,
+            "overflow": 76.453125
+          }
+        ]
+      }
+    },
+    {
+      "type": "responsive",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"Add Client\" is 101x38px (minimum 44x44px)",
+      "viewport": "mobile",
       "elements": [
         "a"
       ],
       "details": {
-        "position": {
-          "x": 649,
-          "y": 9220
-        },
-        "reason": "far below fold"
+        "width": 101,
+        "height": 38,
+        "minRequired": 44,
+        "label": "Add Client"
       }
     },
     {
       "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: button",
-      "viewport": "desktop",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"input\" is 343x40px (minimum 44x44px)",
+      "viewport": "mobile",
+      "elements": [
+        "input"
+      ],
+      "details": {
+        "width": 343,
+        "height": 40,
+        "minRequired": 44,
+        "label": "input"
+      }
+    },
+    {
+      "type": "responsive",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"Show Active\nShow Archived\nShow\" is 343x40px (minimum 44x44px)",
+      "viewport": "mobile",
+      "elements": [
+        "select"
+      ],
+      "details": {
+        "width": 343,
+        "height": 40,
+        "minRequired": 44,
+        "label": "Show Active\nShow Archived\nShow"
+      }
+    },
+    {
+      "type": "responsive",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"15 per page\n25 per page\n50 per\" is 343x40px (minimum 44x44px)",
+      "viewport": "mobile",
+      "elements": [
+        "select"
+      ],
+      "details": {
+        "width": 343,
+        "height": 40,
+        "minRequired": 44,
+        "label": "15 per page\n25 per page\n50 per"
+      }
+    },
+    {
+      "type": "responsive",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"Export CSV\" is 121x38px (minimum 44x44px)",
+      "viewport": "mobile",
       "elements": [
         "button"
       ],
       "details": {
-        "position": {
-          "x": 183,
-          "y": 9112
-        },
-        "reason": "far below fold"
+        "width": 121,
+        "height": 38,
+        "minRequired": 44,
+        "label": "Export CSV"
       }
     },
     {
       "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: a",
-      "viewport": "desktop",
+      "severity": "moderate",
+      "rule": "touch-target-size",
+      "description": "Touch target \"input\" is 16x16px (minimum 44x44px)",
+      "viewport": "mobile",
       "elements": [
-        "a"
+        "input"
       ],
       "details": {
-        "position": {
-          "x": 649,
-          "y": 9298
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: button",
-      "viewport": "desktop",
-      "elements": [
-        "button"
-      ],
-      "details": {
-        "position": {
-          "x": 183,
-          "y": 9189
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: a",
-      "viewport": "desktop",
-      "elements": [
-        "a"
-      ],
-      "details": {
-        "position": {
-          "x": 649,
-          "y": 9375
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: button",
-      "viewport": "desktop",
-      "elements": [
-        "button"
-      ],
-      "details": {
-        "position": {
-          "x": 183,
-          "y": 9267
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: a",
-      "viewport": "desktop",
-      "elements": [
-        "a"
-      ],
-      "details": {
-        "position": {
-          "x": 649,
-          "y": 9453
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: button",
-      "viewport": "desktop",
-      "elements": [
-        "button"
-      ],
-      "details": {
-        "position": {
-          "x": 183,
-          "y": 9345
-        },
-        "reason": "far below fold"
-      }
-    },
-    {
-      "type": "responsive",
-      "severity": "minor",
-      "rule": "element-out-of-bounds",
-      "description": "Interactive element is far below fold: a",
-      "viewport": "desktop",
-      "elements": [
-        "a"
-      ],
-      "details": {
-        "position": {
-          "x": 649,
-          "y": 9531
-        },
-        "reason": "far below fold"
+        "width": 16,
+        "height": 16,
+        "minRequired": 44,
+        "label": "input"
       }
     }
   ],
   "verifications": [],
   "states": [
     {
-      "id": "aefbe4145cafb439",
-      "url": "http://localhost:3000/",
-      "title": "Swamp City Stompers | Southern Rock from the Bayou",
-      "viewport": "desktop",
-      "issueCount": 10
+      "id": "f3db2dfbb9a7c575",
+      "url": "http://localhost:8000/clients",
+      "title": "Daybook",
+      "viewport": "mobile",
+      "issueCount": 8
     }
   ]
 }
