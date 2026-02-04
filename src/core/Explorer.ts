@@ -371,9 +371,12 @@ export class Explorer {
       // Perform the action
       await this.executeAction(page, action)
 
-      // Wait for any async effects
+      // Wait for any async effects (only if waitForNetworkIdle is enabled)
       if (this.config.exploration?.waitForNetworkIdle) {
         await page.waitForLoadState('networkidle').catch(() => {})
+      } else {
+        // Brief wait for DOM to settle without requiring network idle
+        await page.waitForTimeout(300)
       }
 
       // Small delay for UI to settle

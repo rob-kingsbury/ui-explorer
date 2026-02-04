@@ -286,6 +286,7 @@ program
   .option('--viewports <list>', 'Override viewports (mobile,tablet,desktop)')
   .option('--ignore <selectors>', 'CSS selectors to ignore (comma-separated)')
   .option('--timeout <ms>', 'Timeout for page loads and actions (default: 10000)')
+  .option('--skip-network-idle', 'Skip waiting for network idle (use for Livewire/SPA apps with constant polling)')
   .option('--zoom <levels>', 'Test at zoom levels (e.g., "100,150,200" for 100%, 150%, 200%)')
   .option('--cookie <cookie...>', 'Set cookies for authentication (name=value), can be repeated')
   .option('--header <header...>', 'Set headers for authentication (Name: value), can be repeated')
@@ -531,7 +532,7 @@ async function runExplorer(
         viewports: options.viewports
           ? (options.viewports as string).split(',') as ViewportName[]
           : preset.exploration.viewports,
-        waitForNetworkIdle: true,
+        waitForNetworkIdle: !options.skipNetworkIdle,
         actionDelay: 100,
         ...fileConfig.exploration,
       },
@@ -1941,7 +1942,8 @@ async function runZoomTesting(
 
       try {
         // Navigate to the base URL
-        await page.goto(config.baseUrl, { waitUntil: 'networkidle', timeout: config.exploration?.timeout || 10000 })
+        const waitUntil = config.exploration?.waitForNetworkIdle ? 'networkidle' : 'load'
+        await page.goto(config.baseUrl, { waitUntil, timeout: config.exploration?.timeout || 10000 })
 
         // Apply zoom via CSS transform (simulates browser zoom)
         const scale = zoom / 100
@@ -2165,7 +2167,7 @@ async function runExplorerAndGetResult(
         maxActionsPerState: 50,
         timeout,
         viewports: preset.exploration.viewports,
-        waitForNetworkIdle: true,
+        waitForNetworkIdle: !options.skipNetworkIdle,
         actionDelay: 100,
       },
       validators: {
