@@ -1050,6 +1050,10 @@ function createProgressHandler(verbose: boolean): (event: ExplorerEvent) => void
       case 'complete':
         process.stdout.write('\r' + ' '.repeat(60) + '\r')
         break
+
+      case 'warning':
+        console.log(chalk.yellow('⚠'), chalk.gray(event.message))
+        break
     }
   }
 }
@@ -1942,8 +1946,14 @@ async function runZoomTesting(
 
       try {
         // Navigate to the base URL
-        const waitUntil = config.exploration?.waitForNetworkIdle ? 'networkidle' : 'load'
-        await page.goto(config.baseUrl, { waitUntil, timeout: config.exploration?.timeout || 10000 })
+        await page.goto(config.baseUrl, { waitUntil: 'load', timeout: config.exploration?.timeout || 10000 })
+
+        // Wait for network to settle (with graceful timeout for SPAs with polling)
+        if (config.exploration?.waitForNetworkIdle !== false) {
+          await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {
+            // Timeout - app likely has persistent network activity, proceed anyway
+          })
+        }
 
         // Apply zoom via CSS transform (simulates browser zoom)
         const scale = zoom / 100

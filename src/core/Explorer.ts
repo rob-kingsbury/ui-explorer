@@ -151,6 +151,39 @@ export class Explorer {
     }
   }
 
+  // Track if we've already warned about persistent network activity
+  private hasWarnedAboutNetworkActivity = false
+
+  /**
+   * Wait for network to settle with a timeout fallback.
+   * This handles SPAs with polling/WebSockets gracefully - if networkidle
+   * isn't reached within the timeout, we proceed anyway.
+   */
+  private async waitForNetworkSettled(page: Page, timeoutMs = 3000): Promise<void> {
+    if (this.config.exploration?.waitForNetworkIdle === false) {
+      // Explicitly disabled - just wait briefly for DOM
+      await page.waitForTimeout(300)
+      return
+    }
+
+    try {
+      // Try to reach networkidle with a short timeout
+      await page.waitForLoadState('networkidle', { timeout: timeoutMs })
+    } catch {
+      // Timeout reached - app likely has persistent network activity (polling, WebSockets, etc.)
+      // This is fine, just proceed
+      if (!this.hasWarnedAboutNetworkActivity) {
+        this.hasWarnedAboutNetworkActivity = true
+        this.emit({
+          type: 'warning',
+          message: 'App has persistent network activity (polling/WebSockets). Proceeding without waiting for network idle.',
+        } as ExplorerEvent)
+      }
+      // Brief wait for DOM to settle
+      await page.waitForTimeout(300)
+    }
+  }
+
   /**
    * Start the exploration
    */
@@ -274,11 +307,14 @@ export class Explorer {
       const viewportSize = DEFAULT_VIEWPORTS[task.viewport]
       await page.setViewportSize(viewportSize)
 
-      // Navigate to URL
+      // Navigate to URL (use 'load' and then smart network idle detection)
       await page.goto(task.url, {
         timeout: this.config.exploration?.timeout || 10000,
-        waitUntil: this.config.exploration?.waitForNetworkIdle ? 'networkidle' : 'load',
+        waitUntil: 'load',
       })
+
+      // Wait for network to settle (with graceful timeout for SPAs with polling)
+      await this.waitForNetworkSettled(page)
 
       // If auth state was provided, wait briefly for SPA auth to settle
       // Some SPAs with localStorage auth need time to hydrate the auth state
@@ -371,13 +407,8 @@ export class Explorer {
       // Perform the action
       await this.executeAction(page, action)
 
-      // Wait for any async effects (only if waitForNetworkIdle is enabled)
-      if (this.config.exploration?.waitForNetworkIdle) {
-        await page.waitForLoadState('networkidle').catch(() => {})
-      } else {
-        // Brief wait for DOM to settle without requiring network idle
-        await page.waitForTimeout(300)
-      }
+      // Wait for network to settle (with graceful timeout for SPAs with polling)
+      await this.waitForNetworkSettled(page)
 
       // Small delay for UI to settle
       if (this.config.exploration?.actionDelay) {

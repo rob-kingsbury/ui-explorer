@@ -631,5 +631,6 @@ export type ExplorerEvent =
   | { type: 'progress'; visited: number; queued: number; issues: number }
   | { type: 'complete'; result: ExplorationResult }
   | { type: 'error'; error: Error }
+  | { type: 'warning'; message: string }
 
 export type ExplorerEventHandler = (event: ExplorerEvent) => void
