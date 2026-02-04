@@ -226,10 +226,21 @@ export class ResponsiveValidator {
       interactive.forEach((el) => {
         const htmlEl = el as HTMLElement
         const rect = htmlEl.getBoundingClientRect()
+        const style = getComputedStyle(htmlEl)
 
         // Skip hidden elements
         if (rect.width === 0 || rect.height === 0) return
-        if (!htmlEl.offsetParent && getComputedStyle(htmlEl).position !== 'fixed') return
+        if (!htmlEl.offsetParent && style.position !== 'fixed') return
+
+        // Skip elements with visibility: hidden
+        if (style.visibility === 'hidden') return
+
+        // Skip elements inside a visibility: hidden parent (e.g., hidden sidebar)
+        let parent = htmlEl.parentElement
+        while (parent) {
+          if (getComputedStyle(parent).visibility === 'hidden') return
+          parent = parent.parentElement
+        }
 
         // Check if too small
         if (rect.width < min || rect.height < min) {
@@ -356,10 +367,21 @@ export class ResponsiveValidator {
         important.forEach((el) => {
           const rect = el.getBoundingClientRect()
           const htmlEl = el as HTMLElement
+          const style = getComputedStyle(htmlEl)
 
           // Skip hidden elements
           if (rect.width === 0 || rect.height === 0) return
-          if (!htmlEl.offsetParent && getComputedStyle(htmlEl).position !== 'fixed') return
+          if (!htmlEl.offsetParent && style.position !== 'fixed') return
+
+          // Skip elements with visibility: hidden (CSS-hidden elements)
+          if (style.visibility === 'hidden') return
+
+          // Skip elements inside a visibility: hidden parent (e.g., hidden sidebar)
+          let parent = htmlEl.parentElement
+          while (parent) {
+            if (getComputedStyle(parent).visibility === 'hidden') return
+            parent = parent.parentElement
+          }
 
           let reason = ''
 
